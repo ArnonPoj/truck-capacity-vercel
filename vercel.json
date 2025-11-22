@@ -2,8 +2,7 @@
   "version": 2,
   "functions": {
     "api/wsgi.py": {
-      "runtime": "python3.9" 
-      /* Vercel มักยอมรับ 3.9 หรือ 3.11 แต่ถ้ายังมีปัญหา ให้ลองใช้รูปแบบนี้ก่อน */
+      "runtime": "python3.11" 
     }
   },
   "routes": [
