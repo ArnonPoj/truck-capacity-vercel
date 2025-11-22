@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/wsgi.py": {
-      "runtime": "python3.11"
+      "runtime": "@vercel/python@1.14.0"
     }
   },
   "routes": [
