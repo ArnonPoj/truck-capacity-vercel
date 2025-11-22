@@ -1,15 +1,8 @@
 {
-
-"version": 2,
-
-"functions": {
-
-"api/wsgi.py": {
-
-"runtime": "python3.11"
-
-}
-
-}
-
+  "version": 2,
+  "functions": {
+    "api/wsgi.py": {
+      "runtime": "python3.11"
+    }
+  }
 }
