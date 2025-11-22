@@ -1,11 +1,12 @@
 {
-  "version": 2,
-  "functions": {
-    "api/wsgi.py": {
-      "runtime": "python3" 
-      /* ใช้ "python3" เพื่อให้ Vercel เลือกเวอร์ชันที่เสถียรที่สุดในสภาพแวดล้อมนั้นเอง */
+  "version": 1, 
+  "builds": [
+    {
+      "src": "api/wsgi.py",
+      "use": "@vercel/python" 
+      // Vercel จะใช้ python3 เวอร์ชันล่าสุดที่รองรับ
     }
-  },
+  ],
   "routes": [
     {
       "src": "/static/(.*)",
