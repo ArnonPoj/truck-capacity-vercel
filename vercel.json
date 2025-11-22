@@ -2,7 +2,8 @@
   "version": 2,
   "functions": {
     "api/wsgi.py": {
-      "runtime": "python3.11" 
+      "runtime": "python3" 
+      /* ใช้ "python3" เพื่อให้ Vercel เลือกเวอร์ชันที่เสถียรที่สุดในสภาพแวดล้อมนั้นเอง */
     }
   },
   "routes": [
