@@ -2,7 +2,7 @@ import math
 from typing import List, Dict, Any
 from flask import Flask, request, jsonify, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", template_folder="templates")
 
 # --- vehicle specs ---
 VEHICLES = {
@@ -63,7 +63,11 @@ def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]:
         "total_volume": total_volume,
         "trucks_needed": trucks_needed,
         "arrangement": {"bottom": bottom, "top": top, "rollbar": rollbar_items},
-        "notes": {"long_item_rule":need_rollbar,"tall_item_rule":need_high,"overweight_standard":overweight_standard}
+        "notes": {
+            "long_item_rule":need_rollbar,
+            "tall_item_rule":need_high,
+            "overweight_standard":overweight_standard
+        }
     }
 
 # ---------------- Flask Routes ----------------
@@ -74,9 +78,9 @@ def index():
 @app.route("/api/calculate-capacity", methods=["POST"])
 def calculate_capacity_route():
     data = request.get_json()
-    if not data or "items" not in data:
-        return jsonify({"error":"Missing items"}), 400
-    result = compute_capacity(data["items"])
+    if not data or "products" not in data:
+        return jsonify({"error":"Missing products"}), 400
+    result = compute_capacity(data["products"])
     return jsonify(result)
 
 if __name__ == "__main__":
