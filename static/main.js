@@ -29,10 +29,10 @@ return obj;
 });
 
 
-const res = await fetch('/api/compute', {
-method: 'POST',
-headers: {'Content-Type':'application/json'},
-body: JSON.stringify({products})
+const res = await fetch('/api/calculate-capacity', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({products})   // key ชื่อ products ตาม JS
 });
 const j = await res.json();
 document.getElementById('result').textContent = JSON.stringify(j, null, 2);
