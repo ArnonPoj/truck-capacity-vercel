@@ -1,5 +1,8 @@
 import math
 from typing import List, Dict, Any
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
 
 # --- vehicle specs (meters, kilograms) ---
 VEHICLES = {
@@ -35,15 +38,12 @@ VEHICLES = {
     }
 }
 
-
-def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]]:
+def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]:
     processed = []
     total_weight = 0.0
     total_volume = 0.0
 
-    # ---------------------------------------------------------------------
     # 1) ประมวลผลสินค้า
-    # ---------------------------------------------------------------------
     for it in items:
         name = it.get("name", "Unnamed")
         w = float(it.get("width", 0))
@@ -71,9 +71,7 @@ def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]]:
         total_weight += item_weight
         total_volume += item_volume
 
-    # ---------------------------------------------------------------------
     # 2) เลือกประเภทรถตามเงื่อนไข
-    # ---------------------------------------------------------------------
     need_rollbar = any(p["long_item"] for p in processed)
     need_high = any(p["tall_item"] for p in processed)
     overweight_standard = total_weight > VEHICLES["standard"]["max_weight"]
@@ -87,15 +85,10 @@ def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]]:
 
     vehicle = VEHICLES[chosen]
 
-    # ---------------------------------------------------------------------
     # 3) คำนวณจำนวนคันที่ต้องใช้
-    #    (ตอนนี้ใช้เกณฑ์น้ำหนักอย่างเดียว)
-    # ---------------------------------------------------------------------
     trucks_needed = math.ceil(total_weight / vehicle["max_weight"])
 
-    # ---------------------------------------------------------------------
     # 4) จัดวางสินค้า bottom / top / rollbar
-    # ---------------------------------------------------------------------
     bottom = []
     top = []
     rollbar_items = []
@@ -114,9 +107,7 @@ def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]]:
         "rollbar": rollbar_items
     }
 
-    # ---------------------------------------------------------------------
     # 5) ส่งผลลัพธ์
-    # ---------------------------------------------------------------------
     return {
         "vehicle_type": chosen,
         "vehicle_info": vehicle,
@@ -131,3 +122,15 @@ def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]]:
             "overweight_standard": overweight_standard
         }
     }
+
+# ---------------- Flask API ----------------
+@app.route("/compute", methods=["POST"])
+def compute():
+    data = request.get_json()
+    if not data or "items" not in data:
+        return jsonify({"error": "Missing items"}), 400
+    result = compute_capacity(data["items"])
+    return jsonify(result)
+
+if __name__ == "__main__":
+    app.run(debug=True)
