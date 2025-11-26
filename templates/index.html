@@ -1,22 +1,75 @@
-<!doctype html>
-<html lang="th">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Truck Capacity Calculator</title>
-</head>
-<body>
-<h1>ระบบคำนวณความจุรถ</h1>
-<div id="product-list">
-<!-- product rows get added by JS -->
-</div>
-<button id="add">เพิ่มสินค้า</button>
-<button id="compute">คำนวณ</button>
+<script>
+    const API_URL = '/api/calculate-capacity'; 
+    let itemIndex = 2;
 
+    function addItemRow() {
+        const container = document.getElementById('capacity-form');
+        const newRow = document.createElement('div');
+        newRow.className = 'input-group item-row';
+        newRow.dataset.itemIndex = itemIndex++;
 
-<pre id="result"></pre>
+        newRow.innerHTML = `
+            <input type="text" placeholder="ชื่อสินค้า" class="item-name" required>
+            <input type="number" step="0.01" min="0" required>
+            <input type="number" step="0.01" min="0" required>
+            <input type="number" step="0.01" min="0" required>
+            <input type="number" step="0.1" min="0" required>
+            <input type="number" step="1" min="1" required>
+        `;
+        container.insertBefore(newRow, container.querySelector('p'));
+    }
 
+    document.getElementById('capacity-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '<h2>สรุปผลการคำนวณ</h2><p class="loading">กำลังคำนวณ...</p>';
 
-<script src="/static/main.js"></script>
-</body>
-</html>
+        const itemRows = document.querySelectorAll('.item-row');
+        const items = Array.from(itemRows).map(row => {
+            const inputs = row.querySelectorAll('input');
+            return {
+                name: inputs[0].value,
+                width: parseFloat(inputs[1].value),
+                length: parseFloat(inputs[2].value),
+                height: parseFloat(inputs[3].value),
+                weight_per_unit: parseFloat(inputs[4].value),
+                quantity: parseInt(inputs[5].value, 10)
+            };
+        });
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ items })  // <-- แก้ key เป็น items
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            displayResults(data);
+
+        } catch (error) {
+            console.error(error);
+            resultsDiv.innerHTML = `<h2>สรุปผลการคำนวณ</h2><p class="error">⚠️ เกิดข้อผิดพลาด: ${error.message}</p>`;
+        }
+    });
+
+    function displayResults(data) {
+        const resultsDiv = document.getElementById('results');
+        let html = `<h2>สรุปผลการคำนวณ</h2>`;
+        html += `<p><strong>น้ำหนักรวม:</strong> ${data.total_weight.toFixed(2)} กก.</p>`;
+        html += `<p><strong>ปริมาตรรวม:</strong> ${data.total_volume.toFixed(2)} ลูกบาศก์เมตร</p>`;
+
+        html += `<p><strong>ประเภทรถที่แนะนำ:</strong> ${data.vehicle_info.name}</p>`;
+        html += `<p><strong>จำนวนรถที่ต้องใช้:</strong> ${data.trucks_needed}</p>`;
+
+        html += `<h4>รายการสินค้า:</h4><ul>`;
+        data.items.forEach(it => {
+            html += `<li>${it.name} - จำนวน ${it.quantity}, น้ำหนักรวม ${it.total_weight} กก., ปริมาตร ${it.total_volume.toFixed(2)} ลบ.ม.</li>`;
+        });
+        html += `</ul>`;
+
+        resultsDiv.innerHTML = html;
+    }
+</script>
