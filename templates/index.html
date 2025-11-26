@@ -1,75 +1,36 @@
-<script>
-    const API_URL = '/api/calculate-capacity'; 
-    let itemIndex = 2;
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Truck Capacity Calculator</title>
+<style>
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; }
+.container { max-width: 800px; margin: auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+h1 { color: #007bff; text-align: center; margin-bottom: 30px; }
+.input-group { margin-bottom: 15px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; align-items: center; }
+.input-group input { grid-column: span 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+button:hover { background-color: #218838; }
+#result { margin-top: 30px; padding: 20px; border: 1px solid #007bff; border-radius: 8px; background-color: #e9f7ff; }
+.loading { text-align: center; color: #ffc107; font-weight: bold; }
+.error { color: #dc3545; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🚚 ระบบคำนวณความสามารถในการบรรทุกรถ</h1>
 
-    function addItemRow() {
-        const container = document.getElementById('capacity-form');
-        const newRow = document.createElement('div');
-        newRow.className = 'input-group item-row';
-        newRow.dataset.itemIndex = itemIndex++;
+<div id="product-list">
+<!-- rows added by JS -->
+</div>
 
-        newRow.innerHTML = `
-            <input type="text" placeholder="ชื่อสินค้า" class="item-name" required>
-            <input type="number" step="0.01" min="0" required>
-            <input type="number" step="0.01" min="0" required>
-            <input type="number" step="0.01" min="0" required>
-            <input type="number" step="0.1" min="0" required>
-            <input type="number" step="1" min="1" required>
-        `;
-        container.insertBefore(newRow, container.querySelector('p'));
-    }
+<button id="add">+ เพิ่มสินค้า</button>
+<button id="compute">คำนวณประเภทรถ</button>
 
-    document.getElementById('capacity-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '<h2>สรุปผลการคำนวณ</h2><p class="loading">กำลังคำนวณ...</p>';
+<pre id="result"></pre>
+</div>
 
-        const itemRows = document.querySelectorAll('.item-row');
-        const items = Array.from(itemRows).map(row => {
-            const inputs = row.querySelectorAll('input');
-            return {
-                name: inputs[0].value,
-                width: parseFloat(inputs[1].value),
-                length: parseFloat(inputs[2].value),
-                height: parseFloat(inputs[3].value),
-                weight_per_unit: parseFloat(inputs[4].value),
-                quantity: parseInt(inputs[5].value, 10)
-            };
-        });
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ items })  // <-- แก้ key เป็น items
-            });
-
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-            const data = await response.json();
-            displayResults(data);
-
-        } catch (error) {
-            console.error(error);
-            resultsDiv.innerHTML = `<h2>สรุปผลการคำนวณ</h2><p class="error">⚠️ เกิดข้อผิดพลาด: ${error.message}</p>`;
-        }
-    });
-
-    function displayResults(data) {
-        const resultsDiv = document.getElementById('results');
-        let html = `<h2>สรุปผลการคำนวณ</h2>`;
-        html += `<p><strong>น้ำหนักรวม:</strong> ${data.total_weight.toFixed(2)} กก.</p>`;
-        html += `<p><strong>ปริมาตรรวม:</strong> ${data.total_volume.toFixed(2)} ลูกบาศก์เมตร</p>`;
-
-        html += `<p><strong>ประเภทรถที่แนะนำ:</strong> ${data.vehicle_info.name}</p>`;
-        html += `<p><strong>จำนวนรถที่ต้องใช้:</strong> ${data.trucks_needed}</p>`;
-
-        html += `<h4>รายการสินค้า:</h4><ul>`;
-        data.items.forEach(it => {
-            html += `<li>${it.name} - จำนวน ${it.quantity}, น้ำหนักรวม ${it.total_weight} กก., ปริมาตร ${it.total_volume.toFixed(2)} ลบ.ม.</li>`;
-        });
-        html += `</ul>`;
-
-        resultsDiv.innerHTML = html;
-    }
-</script>
+<script src="/static/main.js"></script>
+</body>
+</html>
