@@ -2,34 +2,24 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Truck Capacity Calculator</title>
 <style>
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; }
-.container { max-width: 800px; margin: auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-h1 { color: #007bff; text-align: center; margin-bottom: 30px; }
-.input-group { margin-bottom: 15px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; align-items: center; }
-.input-group input { grid-column: span 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
-button:hover { background-color: #218838; }
-#result { margin-top: 30px; padding: 20px; border: 1px solid #007bff; border-radius: 8px; background-color: #e9f7ff; }
-.loading { text-align: center; color: #ffc107; font-weight: bold; }
-.error { color: #dc3545; font-weight: bold; }
+body { font-family: Arial; margin:20px; }
+.item-row input { width: 80px; margin-right:5px; }
 </style>
 </head>
 <body>
-<div class="container">
-<h1>🚚 ระบบคำนวณความสามารถในการบรรทุกรถ</h1>
+<h1>ระบบคำนวณความจุรถ</h1>
 
 <div id="product-list">
-<!-- rows added by JS -->
+<!-- JS จะเพิ่ม row ที่นี่ -->
 </div>
 
 <button id="add">+ เพิ่มสินค้า</button>
-<button id="compute">คำนวณประเภทรถ</button>
+<button id="compute">คำนวณ</button>
 
 <pre id="result"></pre>
-</div>
 
 <script src="/static/main.js"></script>
 </body>
