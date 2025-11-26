@@ -124,8 +124,8 @@ def compute_capacity(items: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 # ---------------- Flask API ----------------
-@app.route("/compute", methods=["POST"])
-def compute():
+@app.route("/api/calculate-capacity", methods=["POST"])
+def calculate_capacity():
     data = request.get_json()
     if not data or "items" not in data:
         return jsonify({"error": "Missing items"}), 400
